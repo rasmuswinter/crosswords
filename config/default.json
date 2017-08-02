@@ -1,0 +1,10 @@
+{
+  "port": 3009,
+  "webpack": {
+    "enabled": false
+  },
+  "logging": {
+    "serverLevel": "debug",
+    "redux": false
+  }
+}
