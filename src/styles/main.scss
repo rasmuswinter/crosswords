@@ -1,3 +1,15 @@
+@import './variables';
+@import '~bootstrap-sass/assets/stylesheets/_bootstrap';
+
+.navbar {
+  border-width: 0;
+  border-bottom-width: 1px;
+}
+
 body {
-  background: #f99;
+  padding-top: $navbar-height + $navbar-margin-bottom;
+}
+
+.container-fluid {
+  max-width: 1000px;
 }

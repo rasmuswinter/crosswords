@@ -1,6 +1,3 @@
-#!/usr/bin/env node
-'use strict';
-
 require('babel-register');
 require('babel-polyfill');
 
@@ -8,7 +5,6 @@ require('babel-polyfill');
 require('../src/logger');
 
 // start the server
-process.env.NODE_ENV = 'development';
 require('../src/server');
 
 global.SERVER = true;

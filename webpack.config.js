@@ -10,6 +10,7 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const statsPlugin = require("webpack-stats-plugin");
 
+const config = require('./config');
 const babelrc = JSON.parse(fs.readFileSync(path.join(__dirname, '.babelrc')));
 
 // class LogBuildPlugin {
@@ -41,31 +42,37 @@ const babelrc = JSON.parse(fs.readFileSync(path.join(__dirname, '.babelrc')));
 //     };
 // }
 
+function hotreload(val) {
+  return config.webpack.hotreload ? val : null;
+}
+
 module.exports = {
   context: __dirname,
   devtool: 'cheap-module-eval-source-map',
-  entry: [
-    'webpack-hot-middleware/client',
+  entry: _.filter([
+    hotreload('webpack-hot-middleware/client'),
     './src/client.js'
-  ],
+  ]),
   output: {
     path: path.join(__dirname, '/static/dist'),
     filename: 'app-[hash].js',
     publicPath: '/static/'
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+  plugins: _.filter([
+    hotreload(new webpack.HotModuleReplacementPlugin()),
     new ProgressBarPlugin({ summary: false }),
     new webpack.optimize.OccurrenceOrderPlugin(),
+    new statsPlugin.StatsWriterPlugin({
+      filename: 'webpack-assets.json'
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         APP: JSON.stringify(require('./config')),
         CLIENT: true
       }
     }),
-    new CleanPlugin('./!(vendor*)', {
-      verbose: false,
-      root: path.resolve(__dirname, '/static/dist')
+    new CleanPlugin('static/dist/*', {
+      verbose: false
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -73,10 +80,9 @@ module.exports = {
         dead_code: true,
         warnings: false
       }
-    }),
+    })
     // new LogBuildPlugin()
-    new statsPlugin.StatsWriterPlugin()
-  ],
+  ]),
   module: {
     rules: [
       {

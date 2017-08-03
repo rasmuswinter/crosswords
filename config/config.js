@@ -1,6 +1,8 @@
-import path from 'path';
-import fs from 'fs';
-import _ from 'lodash';
+'use strict'
+
+const path = require('path');
+const fs = require('fs');
+const _ = require('lodash');
 
 // cribbed from node-config package, but without the conditional `require`s for non-JSON formats
 

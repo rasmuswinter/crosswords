@@ -1,6 +1,5 @@
 {
-  "port": 3009,
   "webpack": {
-    "enabled": true
+    "hotreload": true
   }
 }

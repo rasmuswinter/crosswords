@@ -1,10 +1,18 @@
 {
   "port": 3009,
   "webpack": {
-    "enabled": false
+    "hotreload": false
   },
   "logging": {
     "serverLevel": "debug",
     "redux": false
+  },
+  "db": {
+    "name": "crosswords",
+    "hosts": [
+      {"name": "localhost", "port": 27017}
+    ],
+    "username": "",
+    "password": ""
   }
 }
