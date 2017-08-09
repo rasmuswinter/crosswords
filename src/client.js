@@ -9,7 +9,7 @@ import createStore from './redux/createStore';
 import App from './components/App';
 import './styles/main.scss';
 
-const store = createStore({});
+const store = createStore();
 
 if (module.hot) {
   module.hot.accept('./styles/main.scss')

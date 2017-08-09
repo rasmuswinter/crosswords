@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class HTML extends Component {
+export default class HTML extends React.Component {
   render() {
     const { assets } = this.props;
 

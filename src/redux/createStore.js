@@ -1,21 +1,12 @@
-import createLogger from 'redux-logger';
+import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import { createStore as _createStore, compose, applyMiddleware } from 'redux';
+import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
 
 import config from '../../config';
-// import reducers from './reducers';
-// import DevTools from '../containers/DevTools';
-// import rootSaga from './sagas'
-
-const reducers = function() {
-  return {};
-};
-
-const rootSaga = function * () {
-    yield [];
-};
 
 const sagaMiddleware = createSagaMiddleware();
 const browserMiddleware = routerMiddleware(browserHistory);
@@ -27,13 +18,15 @@ if (config.logging.redux) {
 
 export default function createStore(initialState = {}) {
   const store = _createStore(
-    reducers,
+    combineReducers({
+      form: formReducer
+    }),
     initialState,
     applyMiddleware(...appliedMiddleware)
   );
 
-  store.runSaga = sagaMiddleware.run;
-  store.runSaga(rootSaga);
+  // store.runSaga = sagaMiddleware.run;
+  // store.runSaga(rootSaga);
 
   return store
 }

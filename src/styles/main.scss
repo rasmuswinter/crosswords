@@ -13,3 +13,39 @@ body {
 .container-fluid {
   max-width: 1000px;
 }
+
+.form-group {
+  .btn-group label.btn {
+    .has-success & {
+      border-color: $state-success-text;
+    }
+    .has-error & {
+      border-color: $state-danger-text;
+    }
+  }
+}
+
+.form-group-lg {
+  .checkbox {
+    $size: $font-size-large * $line-height-base;
+    $gap: 8px;
+
+    height: $input-height-large;
+
+    label {
+      padding-left: $size + $gap;
+    }
+
+    input {
+      margin-left: -($size + $gap);
+      width: $size;
+      height: $size;
+    }
+  }
+}
+
+.crossword-form {
+  .submission .btn {
+    margin-left: 10px;
+  }
+}

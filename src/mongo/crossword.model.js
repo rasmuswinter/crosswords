@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
+import { crosswordTypes } from './constants';
 
-export const types = {
-  NORMAL: 'normal'
-};
+const Schema = mongoose.Schema;
 
 export const fields = {
   setter: { type: String, required: true },
   number: { type: Number, required: true, unique: true },
   date: { type: String, required: false },
+  notes: { type: String, required: false },
   config: {
-    type: { type: String, default: types.NORMAL },
+    type: { type: String, default: crosswordTypes.NORMAL },
     gridSize: { type: Number, default: 15 },
+    alphabet: { type: Boolean, default: false },
     gridCount: { type: Number, default: 1 }
   },
   solution: [{

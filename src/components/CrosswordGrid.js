@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import CrosswordGridCell from "./CrosswordGridCell";
 
-export default class CrosswordGrid extends Component {
+export default class CrosswordGrid extends React.Component {
   render() {
     const { cells } = this.props;
     return (

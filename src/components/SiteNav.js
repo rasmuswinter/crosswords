@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-export default class SiteNav extends Component {
+export default class SiteNav extends React.Component {
   render() {
     return (
       <Navbar fixedTop collapseOnSelect fluid>
