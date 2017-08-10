@@ -6,76 +6,24 @@ import { connect } from 'react-redux';
 
 import { crosswordTypes } from '../mongo/constants';
 import CrosswordGrid from "./CrosswordGrid";
-
-function renderComponent({ input, meta, id, type, label, ...other }) {
-  const inputProps = {
-    ...other.inputProps,
-    ...input,
-    id,
-    type
-  };
-  let validationState;
-  if (meta.touched) {
-    validationState = meta.error ? 'error' : 'success';
-  }
-  if (type === 'textarea') {
-    inputProps.componentClass = type;
-  }
-
-  let fieldComponent;
-  switch(type) {
-    case 'radio-bar':
-      fieldComponent = (
-        <BS.ToggleButtonGroup type="radio"
-                              bsSize="large"
-                              name={input.name}
-                              value={input.value}
-                              justified>
-          {
-            other.options.map(option => {
-              const radioProps = {
-                ...inputProps,
-                key: option.value,
-                value: option.value,
-                id: id + '_' + option.value
-              };
-              return <BS.ToggleButton {...radioProps}>{option.label}</BS.ToggleButton>;
-            })
-          }
-        </BS.ToggleButtonGroup>
-      );
-      break;
-    case 'checkbox':
-      fieldComponent = <BS.Checkbox {...inputProps}>{other.inputProps.text}</BS.Checkbox>;
-      break;
-    default:
-      fieldComponent = <BS.FormControl {...inputProps} />;
-  }
-
-  return (
-    <BS.FormGroup bsSize="large" validationState={validationState}>
-      <BS.Col sm={3}>
-        <BS.ControlLabel htmlFor={id}>{label}</BS.ControlLabel>
-      </BS.Col>
-      <BS.Col sm={9}>
-        { fieldComponent }
-        {validationState === 'error' && <div className="text-danger">{meta.error}</div>}
-      </BS.Col>
-    </BS.FormGroup>
-  );
-}
+import { renderComponent } from './form/formUtils';
 
 const required = val => val ? undefined : 'Required';
 
-@reduxForm()
-@connect((state, ownProps) => {
+function mapStoreToProps(state, ownProps) {
   const props = {};
   if (ownProps.form) {
     const newFormSelector = formValueSelector(ownProps.form);
     props.typeValue = newFormSelector(state, 'gridType');
   }
+
+  //todo: use https://github.com/reactjs/reselect
+
   return props;
-})
+}
+
+@reduxForm()
+@connect(mapStoreToProps)
 export default class CrosswordForm extends React.Component {
   render() {
     const { handleSubmit, typeValue, buttonLabel, submitFailed } = this.props;
@@ -127,7 +75,7 @@ export default class CrosswordForm extends React.Component {
                          type="checkbox"
                          label="Alphabet"
                          component={renderComponent}
-                         inputProps={{text: 'Instead of numbers, clues are given alphabetically, and have to be fit, jigsaw-wise'}}/>
+                         text="Instead of numbers, clues are given by letter, and have to be fit where they can, jigsaw-style"/>
                   <Field id="config_count"
                          name="gridCount"
                          type="number"

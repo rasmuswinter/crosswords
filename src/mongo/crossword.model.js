@@ -21,8 +21,11 @@ export const fields = {
     gridLettersInverted: [{ type: String }]
   }],
   clues: [{
-    identifiers: [{ type: String }],
-    clue: { type: String }
+    // only one of numbers/letter will be populated, depending on config.alphabet
+    numbers: [{ type: Number }],
+    letter: { type: String },
+    clue: { type: String },
+    counts: [{ type: Number }]
   }]
 };
 

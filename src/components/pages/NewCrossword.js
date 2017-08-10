@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CrosswordForm from '../CrosswordForm';
-import FormValues from '../FormValues';
+import FormValues from '../form/FormValues';
 import { crosswordTypes } from '../../mongo/constants';
 
 
