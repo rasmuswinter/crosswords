@@ -4,14 +4,18 @@ import _ from 'lodash';
 
 export default class CrosswordGridCell extends React.Component {
   render() {
-    const { cell } = this.props;
+    const { cell, showSolution } = this.props;
     const classes = ['crossword-grid-cell'];
+    if (cell.empty) {
+      classes.push('empty');
+    }
     return (
-      <div className={_.filter(classes).join(' ')} />
+      <div className={_.filter(classes).join(' ')}>{showSolution && !cell.empty && cell.letter}</div>
     )
   }
 }
 
 CrosswordGridCell.propTypes = {
-  cell: PropTypes.object.isRequired
+  cell: PropTypes.object.isRequired,
+  showSolution: PropTypes.bool.isRequired
 };

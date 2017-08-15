@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { createSelector } from 'reselect'
 import { Link } from 'react-router-dom';
-import Promise from 'bluebird';
 
 import { actions } from '../../redux/constants';
-import CrosswordError from "../../util/CrosswordError";
+import CrosswordError from '../../util/CrosswordError';
+import client from '../../util/api';
+import CrosswordGrid from '../CrosswordGrid';
+import CrosswordClues from '../CrosswordClues';
 
 // selectors
 const crosswordsActivitySelector = (state, ownProps) => state.crossword.lastAction;
@@ -15,11 +17,33 @@ const crosswordIdSelector = (state, ownProps) => parseInt(ownProps.match.params.
 const crosswordSelector = createSelector(
   [crosswordsSelector, crosswordIdSelector, crosswordsActivitySelector],
   (crosswords, crosswordId) => {
-    console.log('getting crossword', crosswordId, 'from', crosswords);
     if (crosswords && crosswordId) {
       const data = _.find(crosswords, { crosswordId });
       if (data) {
-        return data.crossword;
+        const { crossword } = data;
+        if (!crossword.number) {
+          return crossword;
+        }
+        const grids = [];
+        for (let i=0; i<crossword.config.gridCount; i++) {
+          const grid = [];
+          const solution = _.find(crossword.solution, { gridNumber: i+1 });
+          for (let x=0; x<crossword.config.gridSize; x++) {
+            const row = [];
+            for (let y=0; y<crossword.config.gridSize; y++) {
+              const letter = solution.gridLetters[x][y];
+              row.push({
+                x,
+                y,
+                empty: letter === '-',
+                letter
+              });
+            }
+            grid.push(row);
+          }
+          grids.push(grid);
+        }
+        return _.merge({}, crossword, { grids })
       }
     }
     return null;
@@ -29,7 +53,6 @@ const crosswordSelector = createSelector(
 function mapStoreToProps(state, ownProps) {
   return {
     crosswordId: crosswordIdSelector(state, ownProps),
-    crosswords: crosswordsSelector(state, ownProps),
     crossword: crosswordSelector(state, ownProps)
   };
 }
@@ -39,13 +62,10 @@ function mapDispatchToProps(dispatch) {
     requestCrossword: crosswordId => dispatch({
       type: actions.FETCH_CROSSWORD,
       payload: {
-        promise: new Promise((resolve, reject) => setTimeout(() => {
-          if (crosswordId%2 == 1) {
-            resolve({ crosswordId, data: {number: crosswordId, data: 'hello world!'} })
-          } else {
-            reject(new CrosswordError(crosswordId, 'Failed to fetch'));
-          }
-        }, 4000)),
+        promise: client.fetchCrossword(crosswordId)
+          .then(response => response.json())
+          .then(data => ({ crosswordId, data }))
+          .catch(error => { throw new CrosswordError(crosswordId, error.message) }),
         data: { crosswordId }
       }
     })
@@ -76,10 +96,33 @@ export default class ViewCrossword extends React.Component {
     const { crossword, crosswordId } = this.props;
     // console.log('VIEW', this.props);
 
-    if (crossword) {
-      return <div>Found crossword {crosswordId}! {JSON.stringify(crossword)} <Link to={'/' + (crosswordId-1)}>prev</Link> <Link to={'/' + (crosswordId+1)}>next</Link></div>
-    } else {
-      return <div>Not found crossword {crosswordId}!</div>
+    if (!crossword) {
+      return null;
     }
+
+    if (crossword.loading) {
+      return <div>Loading...</div>;
+    }
+
+    return (
+      <div>
+        {
+          crossword.error
+            ?
+            <div className="error">{crossword.error}</div>
+            :
+            <div>
+              {JSON.stringify(crossword)}
+              <h1>Crossword {crossword.number}</h1>
+              <h2>By {crossword.setter}</h2>
+              {crossword.notes && <p>{crossword.notes}</p>}
+              {crossword.grids.map((grid, i) => <CrosswordGrid key={i} cells={grid} showSolution={true} />)}
+              <CrosswordClues clues={crossword.clues} alphabet={crossword.config.alphabet} />
+
+            </div>
+        }
+        <div><Link to={'/' + (crosswordId-1)}>prev</Link> <Link to={'/' + (crosswordId+1)}>next</Link></div>
+      </div>
+    );
   }
 }

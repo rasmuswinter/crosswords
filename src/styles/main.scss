@@ -49,3 +49,36 @@ body {
     margin-left: 10px;
   }
 }
+
+.crossword-grid {
+  .crossword-grid-row {
+    @include clearfix;
+
+    .crossword-grid-cell {
+      width: 40px;
+      height: 40px;
+      float: left;
+      border: 1px solid black;
+      overflow: hidden;
+      text-align: center;
+      line-height: 40px;
+      font-size: 28px;
+      font-weight: bold;
+
+      & + .crossword-grid-cell {
+        border-left: 0;
+      }
+
+      &.empty {
+        background: black;
+      }
+    }
+
+
+    & + .crossword-grid-row {
+      .crossword-grid-cell {
+        border-top: 0;
+      }
+    }
+  }
+}

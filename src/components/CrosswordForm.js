@@ -5,7 +5,6 @@ import * as BS from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import { crosswordTypes } from '../mongo/constants';
-import CrosswordGrid from "./CrosswordGrid";
 import { renderComponent } from './form/formUtils';
 
 const required = val => val ? undefined : 'Required';
@@ -114,6 +113,6 @@ export default class CrosswordForm extends React.Component {
     );
   }
 }
-CrosswordGrid.propTypes = {
+CrosswordForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired
 };
