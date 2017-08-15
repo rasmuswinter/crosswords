@@ -1,28 +1,32 @@
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
-import { browserHistory } from 'react-router';
-import { routerMiddleware } from 'react-router-redux';
-import { createStore as _createStore, compose, applyMiddleware } from 'redux';
+import { routerMiddleware, routerReducer } from 'react-router-redux';
+import { createStore as _createStore, applyMiddleware } from 'redux';
 import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
+import promiseMiddleware from 'redux-promise-middleware';
 
 import config from '../../config';
+import crosswordReducer from './crosswordReducer';
 
-const sagaMiddleware = createSagaMiddleware();
-const browserMiddleware = routerMiddleware(browserHistory);
+export default function createStore(history, initialState = {}) {
+  const middleware = [
+    promiseMiddleware(),
+    // createSagaMiddleware(),
+    routerMiddleware(history)
+  ];
+  if (config.logging.redux) {
+    middleware.push(createLogger());
+  }
 
-const appliedMiddleware = [sagaMiddleware, browserMiddleware];
-if (config.logging.redux) {
-  appliedMiddleware.push(createLogger());
-}
-
-export default function createStore(initialState = {}) {
   const store = _createStore(
     combineReducers({
-      form: formReducer
+      form: formReducer,
+      routing: routerReducer,
+      crossword: crosswordReducer
     }),
     initialState,
-    applyMiddleware(...appliedMiddleware)
+    applyMiddleware(...middleware)
   );
 
   // store.runSaga = sagaMiddleware.run;
